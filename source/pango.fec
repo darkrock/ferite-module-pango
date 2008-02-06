@@ -1,0 +1,257 @@
+uses 'pango.lib';
+
+module-header
+{
+	#include <pango-1.0/pango/pango.h>
+	
+	typedef struct pango_font_description_data
+	{
+		PangoFontDescription* font_description;
+		
+	} PangoFontDescriptionData;
+	
+	typedef struct pango_layout_data
+	{
+		PangoLayout* layout;
+		
+	} PangoLayoutData;
+	
+	typedef struct pango_layout_line_data
+	{
+		PangoLayoutLine* layout_line;
+		
+	} PangoLayoutLineData;
+}
+
+/**
+ * @namespace Pango
+ */
+namespace Pango
+{
+	/**
+	 * @class FontDescription
+	 */
+	class FontDescription
+	{
+		/**
+		 * @function constructor
+		 * @declaration function constructor( )
+		 */
+		native function constructor( )
+		{
+			PangoFontDescriptionData* font_description_data =
+				fmalloc( sizeof( PangoFontDescriptionData ) );
+			font_description_data->font_description = NULL;
+			
+			PangoFontDescription* font_description = pango_font_description_new();
+			
+			font_description_data->font_description = font_description;
+			
+			self->odata = font_description_data;
+		}
+		
+		/**
+		 * @function constructor
+		 * @declaration function constructor( string str )
+		 * @param string str
+		 */
+		native function constructor( string str )
+		{
+			PangoFontDescriptionData* font_description_data =
+				fmalloc( sizeof( PangoFontDescriptionData ) );
+			
+			font_description_data->font_description = NULL;
+			
+			PangoFontDescription* font_description =
+				pango_font_description_from_string( str->data );
+			
+			font_description_data->font_description = font_description;
+			
+			self->odata = font_description_data;
+		}
+		
+		native function destructor( )
+		{
+			PangoFontDescriptionData* font_description_data = self->odata;
+			
+			if( font_description_data->font_description )
+			{
+				pango_font_description_free( font_description_data->font_description );
+			}
+			
+			ffree( font_description_data );
+		}
+	}
+	/**
+	 * @end
+	 */
+
+	/**
+	 * @class Layout
+	 */
+	class Layout
+	{
+		native function constructor( )
+		{
+			FE_RETURN_NULL_OBJECT;
+		}
+		
+		/**
+		 * @function constructor
+		 * @declaration function constructor( object context )
+		 */
+		native function constructor( object context )
+		{
+			FE_RETURN_NULL_OBJECT;
+			
+			/*
+			PangoLayoutData* layout_data = fmalloc( sizeof( PangoLayoutData ) );
+			layout_data->layout = NULL;
+			
+			PangoLayout* layout = pango_layout_new( );
+			
+			layout_data->layout = layout;
+			
+			self->odata = layout_data;
+			*/
+		}
+				
+		native function destructor( )
+		{
+			PangoLayoutData* layout_data = self->odata;
+			
+			if( layout_data->layout != NULL )
+			{
+				g_object_unref( layout_data->layout );
+			}
+			
+			ffree( layout_data );
+		}
+		
+		/**
+		 * @function @setText
+		 * @declaration function setText( string text )
+		 * @param string text
+		 */
+		native function setText( string text )
+		{
+			PangoLayoutData* layout_data = self->odata;
+			pango_layout_set_text( layout_data->layout, text->data, -1 );
+			FE_RETURN_VOID;
+		}
+		
+		/**
+		 * @function setWidth
+		 * @declaration function setWidth( number width )
+		 * @param number width
+		 */
+		native function setWidth( number width )
+		{
+			long width_long = 0;
+			
+			if( width < LONG_MAX )
+			{
+				width_long = (long)width;
+			}
+			
+			PangoLayoutData* layout_data = self->odata;
+			
+			pango_layout_set_width( layout_data->layout, width_long );
+			
+			FE_RETURN_VOID;
+		}
+		
+		/**
+		 * @function setFontDescription
+		 * @declaration function setFontDescription( object fontDescription )
+		 * @param object fontDescription
+		 */
+		native function setFontDescription( object fontDescription )
+		{
+			FeriteNamespaceBucket* nsb = NULL;
+			
+			nsb = ferite_find_namespace( script, script->mainns, "Pango.FontDescription", FENS_CLS );
+			
+			if ( nsb != NULL )
+			{
+				FeriteClass* klass = nsb->data;
+				
+				if( ferite_class_is_subclass( klass, fontDescription->klass ) == FE_TRUE )
+				{
+					PangoFontDescriptionData* font_description_data = fontDescription->odata;
+					PangoLayoutData* layout_data = self->odata;
+					
+					pango_layout_set_font_description( layout_data->layout,
+						font_description_data->font_description );
+				}
+			}
+			
+			FE_RETURN_VOID;
+		}
+		
+		/**
+		 * @function getIter
+		 */
+		native function getIter( )
+		{
+			PangoLayoutData* layout_data = self->odata;
+		}
+	}
+	/**
+	 * @end
+	 */
+	
+	/**
+	 * @class LayoutIter
+	 */
+	class LayoutIter
+	{
+		/**
+		 * @function getBaseline
+		 */
+		native function getBaseline()
+		{
+		}
+		
+		/**
+		 * @function getLineYRange
+		 */
+		native function getLineYRange()
+		{
+		}
+		
+		/**
+		 * @function getLineExtents
+		 */
+		native function getLineExtents()
+		{
+		}
+	}
+	/**
+	 * @end
+	 */
+	
+	/**
+	 * @class LayoutLine
+	 */
+	class LayoutLine
+	{
+	}
+	/**
+	 * @end
+	 */
+
+	/**
+	 * @class Rectangle
+	 */
+	class Rectangle
+	{
+	}
+	/**
+	 * @end
+	 */
+}
+/**
+ * @end
+ */
+

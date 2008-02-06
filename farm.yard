@@ -1,0 +1,28 @@
+<?xml version="1.0" ?>
+<yard name="pango">
+
+	<module id="pango">
+		<list type="source">
+			<file name="source/pango.fec" />
+			<!-- <fileset dir="source" match="utility\.[ch]$" /> -->
+		</list>
+		<property type="C">
+			<program-output program="ferite-config" arguments="--cflags" />
+			<program-output program="pkg-config" arguments="--cflags pango" />
+		</property>
+		<property type="LD">
+			<program-output program="ferite-config" arguments="--libs" />
+			<program-output program="pkg-config" arguments="--libs pango" />
+		</property>
+		<property type="prefix" value="$(FeriteModuleNativeDir)" />        
+	</module>
+	    
+	<phase id="install" depends="build">
+		<perform action="install" target="pango" />
+		<copy file="source/pango.fec" target="$(FeriteModuleSourceDir)" />
+		<copy file="$(ProductDir)/pango.xml" target="$(FeriteModuleDescriptionDir)" />
+		<execute program="feritedoc" arguments="--regenerate" />
+	</phase>
+    
+</yard>
+
