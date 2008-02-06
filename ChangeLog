@@ -1,1 +1,8 @@
+-------------------------------------------------------------------------------
+2008-02-06 17:19 (CET), Tobias Eriksson <tobias@cention.net>
+
+ * Implemented the getIter(), getBaseLine(), getLineYRange() functions in
+   the Pango.LayoutIter class.
+
+-------------------------------------------------------------------------------
 

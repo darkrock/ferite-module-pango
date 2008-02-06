@@ -16,6 +16,12 @@ module-header
 		
 	} PangoLayoutData;
 	
+	typedef struct pango_layout_iter_data
+	{
+		PangoLayoutIter* iter;
+		
+	} PangoLayoutIterData;
+	
 	typedef struct pango_layout_line_data
 	{
 		PangoLayoutLine* layout_line;
@@ -191,10 +197,38 @@ namespace Pango
 		
 		/**
 		 * @function getIter
+		 * @declaration function getIter( )
 		 */
 		native function getIter( )
 		{
-			PangoLayoutData* layout_data = self->odata;
+			FeriteNamespaceBucket* nsb = NULL;
+			
+			FeriteClass* iter_class = NULL;
+			FeriteVariable* iter_object = NULL;
+			
+			nsb = ferite_find_namespace( script, script->mainns, "Pango.LayoutIter", FENS_CLS );
+			
+			if ( nsb != NULL )
+			{
+				iter_class = nsb->data;
+				
+				iter_object = ferite_build_object( script, iter_class );
+				UNMARK_VARIABLE_AS_DISPOSABLE( iter_object );
+				
+				PangoLayoutData* layout_data = self->odata;
+				
+				PangoLayoutIter* iter = pango_layout_get_iter( layout_data->layout );
+				
+				PangoLayoutIterData* iter_data = fmalloc( sizeof( PangoLayoutIterData ) );
+				iter_data->iter = NULL;
+				iter_data->iter = iter;
+				
+				VAO( iter_object )->odata = iter_data;
+				
+				FE_RETURN_OBJECT( VAO( iter_object ) );
+			}
+			
+			FE_RETURN_NULL_OBJECT;
 		}
 	}
 	/**
@@ -206,24 +240,67 @@ namespace Pango
 	 */
 	class LayoutIter
 	{
+		native function constructor( )
+		{
+			FE_RETURN_NULL_OBJECT;
+		}
+		
+		native function destructor( )
+		{
+			PangoLayoutIterData* iter_data = self->odata;
+			
+			if( iter_data->iter )
+			{
+				pango_layout_iter_free( iter_data->iter );
+			}
+			
+			ffree( iter_data );
+		}
+		
 		/**
 		 * @function getBaseline
+		 * @declaration function getBaseLine( )
 		 */
 		native function getBaseline()
 		{
+			PangoLayoutIterData* iter_data = self->odata;
+			long baseline = pango_layout_iter_get_baseline( iter_data->iter );
+			FE_RETURN_LONG( baseline );
 		}
 		
 		/**
 		 * @function getLineYRange
+		 * @declaration getLineYRange( )
 		 */
-		native function getLineYRange()
+		native function getLineYRange( )
 		{
+			PangoLayoutIterData* iter_data = self->odata;
+			
+			int y_start;
+			int y_end;
+			
+			pango_layout_iter_get_line_yrange( iter_data->iter, &y_start, &y_end );
+			
+			FeriteVariable* fe_y_start =
+				ferite_create_number_long_variable( script, "yStart", y_start, FE_STATIC );
+			
+			FeriteVariable* fe_y_end =
+				ferite_create_number_long_variable( script, "yEnd", y_end, FE_STATIC );
+			
+			FeriteVariable* y_range =
+				ferite_create_uarray_variable( script, "yRange", 2, FE_STATIC );
+			
+			ferite_uarray_add( script, VAUA( y_range ), fe_y_start, "yStart", FE_ARRAY_ADD_AT_END );
+			ferite_uarray_add( script, VAUA( y_range ), fe_y_end, "yEnd", FE_ARRAY_ADD_AT_END );
+			
+			FE_RETURN_VAR( y_range );
 		}
 		
 		/**
 		 * @function getLineExtents
+		 * @declaration getLineExtents( )
 		 */
-		native function getLineExtents()
+		native function getLineExtents( )
 		{
 		}
 	}
