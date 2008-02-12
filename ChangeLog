@@ -1,4 +1,9 @@
 -------------------------------------------------------------------------------
+2008-02-12 14:57 (CET), Tobias Eriksson <tobias@cention.net>
+
+ * Implemented Pango.LayoutIter.nextLine().
+
+-------------------------------------------------------------------------------
 2008-02-12 12:52 (CET), Tobias Eriksson <tobias@cention.net>
 
  * Implemented Pango.LayoutIter.getLine().

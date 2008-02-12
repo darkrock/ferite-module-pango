@@ -34,6 +34,8 @@ module-header
  */
 namespace Pango
 {
+	final static number SCALE = 1024;
+	
 	/**
 	 * @class FontDescription
 	 */
@@ -302,6 +304,24 @@ namespace Pango
 			}
 			
 			FE_RETURN_NULL_OBJECT;
+		}
+		
+		/**
+		 * @function nextLine
+		 * @declaration function nextLine( )
+		 */
+		native function nextLine( )
+		{
+			PangoLayoutIterData* iter_data = self->odata;
+			
+			gboolean on_last_line = pango_layout_iter_next_line( iter_data->iter );
+			
+			if( on_last_line )
+			{
+				FE_RETURN_FALSE;
+			}
+			
+			FE_RETURN_TRUE;
 		}
 		
 		/**
