@@ -1,4 +1,9 @@
 -------------------------------------------------------------------------------
+2008-02-12 17:20 (CET), Tobias Eriksson <tobias@cention.net>
+
+ * Fixed bug in Pango.LayoutIter.nextLine().
+
+-------------------------------------------------------------------------------
 2008-02-12 14:57 (CET), Tobias Eriksson <tobias@cention.net>
 
  * Implemented Pango.LayoutIter.nextLine().

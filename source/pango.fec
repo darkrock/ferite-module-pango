@@ -314,9 +314,9 @@ namespace Pango
 		{
 			PangoLayoutIterData* iter_data = self->odata;
 			
-			gboolean on_last_line = pango_layout_iter_next_line( iter_data->iter );
+			gboolean not_on_last_line = pango_layout_iter_next_line( iter_data->iter );
 			
-			if( on_last_line )
+			if(! not_on_last_line )
 			{
 				FE_RETURN_FALSE;
 			}
