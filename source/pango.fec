@@ -24,7 +24,7 @@ module-header
 	
 	typedef struct pango_layout_line_data
 	{
-		PangoLayoutLine* layout_line;
+		PangoLayoutLine* line;
 		
 	} PangoLayoutLineData;
 }
@@ -269,6 +269,42 @@ namespace Pango
 		}
 		
 		/**
+		 * @function getLine
+		 * @declaration function getLine( )
+		 */
+		native function getLine( )
+		{
+			FeriteNamespaceBucket* nsb = NULL;
+			
+			FeriteClass* line_class = NULL;
+			FeriteVariable* line_object = NULL;
+			
+			nsb = ferite_find_namespace( script, script->mainns, "Pango.LayoutLine", FENS_CLS );
+			
+			if( nsb != NULL )
+			{
+				line_class = nsb->data;
+				
+				line_object = ferite_build_object( script, line_class );
+				UNMARK_VARIABLE_AS_DISPOSABLE( line_object );
+				
+				PangoLayoutIterData* iter_data = self->odata;
+				
+				PangoLayoutLine* line = pango_layout_iter_get_line( iter_data->iter );
+				
+				PangoLayoutLineData* line_data = fmalloc( sizeof( PangoLayoutLineData ) );
+				line_data->line = NULL;
+				line_data->line = line;
+				
+				VAO( line_object )->odata = line_data;
+				
+				FE_RETURN_OBJECT( VAO( line_object ) );
+			}
+			
+			FE_RETURN_NULL_OBJECT;
+		}
+		
+		/**
 		 * @function getLineYRange
 		 * @declaration getLineYRange( )
 		 */
@@ -281,17 +317,13 @@ namespace Pango
 			
 			pango_layout_iter_get_line_yrange( iter_data->iter, &y_start, &y_end );
 			
-			FeriteVariable* fe_y_start =
-				ferite_create_number_long_variable( script, "yStart", y_start, FE_STATIC );
+			FeriteVariable* fe_y_start = ferite_create_number_long_variable( script, "yStart", y_start, FE_STATIC );
+			FeriteVariable* fe_y_end = ferite_create_number_long_variable( script, "yEnd", y_end, FE_STATIC );
 			
-			FeriteVariable* fe_y_end =
-				ferite_create_number_long_variable( script, "yEnd", y_end, FE_STATIC );
+			FeriteVariable* y_range = ferite_create_uarray_variable( script, "yRange", 2, FE_STATIC );
 			
-			FeriteVariable* y_range =
-				ferite_create_uarray_variable( script, "yRange", 2, FE_STATIC );
-			
-			ferite_uarray_add( script, VAUA( y_range ), fe_y_start, "yStart", FE_ARRAY_ADD_AT_END );
-			ferite_uarray_add( script, VAUA( y_range ), fe_y_end, "yEnd", FE_ARRAY_ADD_AT_END );
+			ferite_uarray_add( script, VAUA( y_range ), fe_y_start, "start", FE_ARRAY_ADD_AT_END );
+			ferite_uarray_add( script, VAUA( y_range ), fe_y_end, "end", FE_ARRAY_ADD_AT_END );
 			
 			FE_RETURN_VAR( y_range );
 		}
@@ -302,6 +334,38 @@ namespace Pango
 		 */
 		native function getLineExtents( )
 		{
+			FeriteNamespaceBucket* nsb = NULL;
+			nsb = ferite_find_namespace( script, script->mainns, "Pango.Rectangle", FENS_CLS );
+			
+			if( nsb != NULL )
+			{
+				FeriteClass* rectangle_class = nsb->data;
+								
+				FeriteVariable* fe_ink_rect = ferite_build_object( script, rectangle_class );
+				FeriteVariable* fe_logical_rect = ferite_build_object( script, rectangle_class );
+								
+				UNMARK_VARIABLE_AS_DISPOSABLE( fe_ink_rect );
+				UNMARK_VARIABLE_AS_DISPOSABLE( fe_logical_rect );
+				
+				FeriteVariable* line_extents = ferite_create_uarray_variable( script, "lineExtents", 2, FE_STATIC );
+				
+				PangoRectangle* ink_rect = fmalloc( sizeof( PangoRectangle ) );
+				PangoRectangle* logical_rect = fmalloc( sizeof( PangoRectangle ) );
+				
+				PangoLayoutIterData* iter_data = self->odata;
+				
+				pango_layout_iter_get_line_extents( iter_data->iter, ink_rect, logical_rect );
+				
+				VAO( fe_ink_rect )->odata = ink_rect;
+				VAO( fe_logical_rect )->odata = logical_rect;
+				
+				ferite_uarray_add( script, VAUA( line_extents ), fe_ink_rect, "ink", FE_ARRAY_ADD_AT_END );
+				ferite_uarray_add( script, VAUA( line_extents ), fe_logical_rect, "logical", FE_ARRAY_ADD_AT_END );
+				
+				FE_RETURN_VAR( line_extents );
+			}
+			
+			FE_RETURN_NULL_OBJECT;
 		}
 	}
 	/**
@@ -313,6 +377,23 @@ namespace Pango
 	 */
 	class LayoutLine
 	{
+		native function constructor( )
+		{
+			FE_RETURN_NULL_OBJECT;
+		}
+		
+		native function destructor( )
+		{
+			PangoLayoutLineData* line_data = self->odata;
+			
+			if( line_data->line != NULL )
+			{
+				/* What should be done here? */
+				/* pango_layout_line_unref( line_data->line ); */
+			}
+			
+			ffree( line_data );
+		}
 	}
 	/**
 	 * @end
@@ -323,6 +404,61 @@ namespace Pango
 	 */
 	class Rectangle
 	{
+		/**
+		 * @function constructor
+		 * @declaration function constructor( )
+		 */
+		native function constructor( )
+		{
+			PangoRectangle* rectangle = fmalloc( sizeof( PangoRectangle ) );
+			self->odata = rectangle;
+		}
+		
+		native function destructor( )
+		{
+			PangoRectangle* rectangle = self->odata;			
+			ffree( rectangle );
+		}
+		
+		/**
+		 * @function getX
+		 * @declaration function getX( )
+		 */
+		native function getX( )
+		{
+			PangoRectangle* rectangle = self->odata;
+			FE_RETURN_LONG( rectangle->x );
+		}
+		
+		/**
+		 * @function getY
+		 * @declaration function getY( )
+		 */
+		native function getY( )
+		{
+			PangoRectangle* rectangle = self->odata;
+			FE_RETURN_LONG( rectangle->y );
+		}
+		
+		/**
+		 * @function getWidth
+		 * @declaration function getWidth( )
+		 */
+		native function getWidth( )
+		{
+			PangoRectangle* rectangle = self->odata;
+			FE_RETURN_LONG( rectangle->width );
+		}
+		
+		/**
+		 * @function getHeight
+		 * @declaration function getHeight( )
+		 */
+		native function getHeight( )
+		{
+			PangoRectangle* rectangle = self->odata;
+			FE_RETURN_LONG( rectangle->height );
+		}
 	}
 	/**
 	 * @end

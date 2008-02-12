@@ -1,4 +1,15 @@
 -------------------------------------------------------------------------------
+2008-02-12 12:52 (CET), Tobias Eriksson <tobias@cention.net>
+
+ * Implemented Pango.LayoutIter.getLine().
+ * Implemented Pango.LayoutIter.getLineExtents().
+ * Implemented the constructor and the destructor in the Pango.LayoutLine class.
+ * Implemented the constructor and the destructor in the Pango.Rectangle class.
+ * Implemented Pango.Rectangle.getX(), Pango.Rectangle.getY(),
+   Pango.Rectangle.getWidth() and Pango.Rectangle.getHeight().
+ * Made som misc cleanups.
+
+-------------------------------------------------------------------------------
 2008-02-06 17:19 (CET), Tobias Eriksson <tobias@cention.net>
 
  * Implemented the getIter(), getBaseLine(), getLineYRange() functions in
