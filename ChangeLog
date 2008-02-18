@@ -1,4 +1,11 @@
 -------------------------------------------------------------------------------
+2008-02-18 10:29 (CET), Tobias Eriksson <tobias@cention.net>
+
+ * Removed the need for the structs pango_font_description_data,
+   pango_layout_data, pango_layout_iter_data, and pango_layout_line_data and
+   removed them.
+
+-------------------------------------------------------------------------------
 2008-02-12 17:20 (CET), Tobias Eriksson <tobias@cention.net>
 
  * Fixed bug in Pango.LayoutIter.nextLine().
