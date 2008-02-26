@@ -105,15 +105,8 @@ namespace Pango
 		 */
 		native function setWidth( number width )
 		{
-			long width_long = 0;
-			
-			if( width < LONG_MAX )
-			{
-				width_long = (long)width;
-			}
-			
 			PangoLayout* layout = self->odata;
-			pango_layout_set_width( layout, width_long );
+			pango_layout_set_width( layout, VAI( params[0] ) );
 			
 			FE_RETURN_VOID;
 		}
