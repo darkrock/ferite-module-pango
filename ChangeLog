@@ -1,4 +1,12 @@
 -------------------------------------------------------------------------------
+2008-03-28 10:25 (CET), Tobias Eriksson <tobias@cention.net>
+
+ * Cleaned up a bit.
+ * Added function Layout.setAlignment().
+ * Added function Layout.setJustify().
+ * Added module-init section.
+
+-------------------------------------------------------------------------------
 2008-02-26 11:18 (CET), Tobias Eriksson <tobias@cention.net>
 
  * Pango.Layout.setWidth() no longer typecasts width to a long. Instead it

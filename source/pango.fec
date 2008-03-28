@@ -2,16 +2,58 @@ uses 'pango.lib';
 
 module-header
 {
-	#include <pango-1.0/pango/pango.h>
+	#include <pango-1.0/pango/pango.h>	
+}
+
+module-init
+{
+	int constant_values[] = { PANGO_ALIGN_LEFT, PANGO_ALIGN_RIGHT,
+		PANGO_ALIGN_CENTER, 0 };
+	char* constant_names[] = { "ALIGN_LEFT", "ALIGN_RIGHT",
+		"ALIGN_CENTER", "" };
+	
+	FeriteNamespace* Pangons = ferite_register_namespace( script, "Pango", script->mainns );
+	FeriteVariable* constant = NULL;
+	
+	int i;
+	
+	for( i = 0; *constant_names[i]; i++ )
+	{
+		constant = ferite_create_number_long_variable( script, constant_names[i],
+			constant_values[i], FE_STATIC );
+		MARK_VARIABLE_AS_FINALSET( constant );
+		ferite_register_ns_variable( script, Pangons, constant_names[i], constant );
+	}
 }
 
 /**
  * @namespace Pango
+ * @brief The namespace for the Pango module
  */
-namespace Pango
+
+/**
+ * @variable SCALE
+ * @type number
+ */
+
+/**
+ * @variable ALIGN_LEFT
+ * @type number
+ */
+
+/**
+ * @variable ALIGN_RIGHT
+ * @type number
+ */
+
+/**
+ * @variable ALIGN_CENTER
+ * @type number
+ */
+
+namespace modifies Pango
 {
 	final static number SCALE = 1024;
-	
 	/**
 	 * @class FontDescription
 	 */
@@ -106,8 +148,31 @@ namespace Pango
 		native function setWidth( number width )
 		{
 			PangoLayout* layout = self->odata;
-			pango_layout_set_width( layout, VAI( params[0] ) );
-			
+			pango_layout_set_width( layout, (int)width );
+			FE_RETURN_VOID;
+		}
+		
+		/**
+		 * @function setAlignment
+		 * @declaration function setAlignment( number alignment )
+		 * @param number alignment
+		 */
+		native function setAlignment( number alignment )
+		{
+			PangoLayout* layout = self->odata;
+			pango_layout_set_alignment( layout, (int)alignment );
+			FE_RETURN_VOID;
+		}
+		
+		/**
+		 * @function setJustify
+		 * @declaration function setJustify( boolean justify )
+		 * @param boolean justify
+		 */
+		native function setJustify( boolean justify )
+		{
+			PangoLayout* layout = self->odata;
+			pango_layout_set_justify( layout, justify );
 			FE_RETURN_VOID;
 		}
 		
