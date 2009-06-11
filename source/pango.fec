@@ -221,14 +221,13 @@ namespace modifies Pango
 				iter_class = nsb->data;
 				
 				iter_object = ferite_build_object( script, iter_class );
-				UNMARK_VARIABLE_AS_DISPOSABLE( iter_object );
 				
 				PangoLayout* layout = self->odata;
 				PangoLayoutIter* iter = pango_layout_get_iter( layout );
 				
 				VAO( iter_object )->odata = iter;
 				
-				FE_RETURN_OBJECT( VAO( iter_object ) );
+				FE_RETURN_VAR( iter_object );
 			}
 			
 			FE_RETURN_NULL_OBJECT;
@@ -286,14 +285,13 @@ namespace modifies Pango
 				line_class = nsb->data;
 				
 				line_object = ferite_build_object( script, line_class );
-				UNMARK_VARIABLE_AS_DISPOSABLE( line_object );
 				
 				PangoLayoutIter* iter = self->odata;
 				PangoLayoutLine* line = pango_layout_iter_get_line( iter );
 				
 				VAO( line_object )->odata = line;
 				
-				FE_RETURN_OBJECT( VAO( line_object ) );
+				FE_RETURN_VAR( line_object );
 			}
 			
 			FE_RETURN_NULL_OBJECT;
@@ -357,9 +355,6 @@ namespace modifies Pango
 				FeriteVariable* fe_ink_rect = ferite_build_object( script, rectangle_class );
 				FeriteVariable* fe_logical_rect = ferite_build_object( script, rectangle_class );
 								
-				UNMARK_VARIABLE_AS_DISPOSABLE( fe_ink_rect );
-				UNMARK_VARIABLE_AS_DISPOSABLE( fe_logical_rect );
-				
 				FeriteVariable* line_extents = ferite_create_uarray_variable( script, "lineExtents", 2, FE_STATIC );
 				
 				PangoRectangle* ink_rect = fmalloc( sizeof( PangoRectangle ) );
